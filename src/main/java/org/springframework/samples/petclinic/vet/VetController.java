@@ -20,6 +20,7 @@ import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.samples.petclinic.infra.myBeans.Aloha;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -37,8 +38,11 @@ class VetController {
 
 	private final VetRepository vetRepository;
 
-	public VetController(VetRepository clinicService) {
+	private final Aloha aloha;
+
+	public VetController(VetRepository clinicService, Aloha aloha) {
 		this.vetRepository = clinicService;
+		this.aloha = aloha;
 	}
 
 	@GetMapping("/vets.html")
@@ -49,6 +53,14 @@ class VetController {
 		Page<Vet> paginated = findPaginated(page);
 		vets.getVetList().addAll(paginated.toList());
 		return addPaginationModel(page, paginated, model);
+	}
+
+
+	@GetMapping("/message")
+	@ResponseBody
+	public String showMessage() {
+		String result = aloha.thisIsMyName();
+		return "This is a simple message from the VetController. Result from Aloha: " + result;
 	}
 
 	private String addPaginationModel(int page, Page<Vet> paginated, Model model) {
